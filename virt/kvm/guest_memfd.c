@@ -91,7 +91,7 @@ static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
 {
 	int r = 0;
 	unsigned long addr = (unsigned long) folio_address(folio);
-	u64 gmem_flags = (u64) folio_inode(folio)->i_private;
+	u64 gmem_flags = GMEM_I(folio_inode(folio))->flags;
 
 	if (kvm_gmem_folio_no_direct_map(folio) || !(gmem_flags & GUEST_MEMFD_FLAG_NO_DIRECT_MAP))
 		goto out;

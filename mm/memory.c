@@ -7346,8 +7346,6 @@ int folio_zap_direct_map(struct folio *folio)
 		return -EINVAL;
 
 	ret = set_direct_map_valid_noflush(addr, folio_nr_pages(folio), false);
-	flush_tlb_kernel_range((unsigned long)addr,
-			       (unsigned long)addr + folio_size(folio));
 
 	return ret;
 }

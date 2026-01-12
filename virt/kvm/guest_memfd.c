@@ -91,6 +91,7 @@ static bool kvm_gmem_folio_no_direct_map(struct folio *folio)
 
 static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
 {
+	unsigned long addr = (unsigned long)folio_address(folio);
 	int r = 0;
 
 	VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
@@ -104,6 +105,8 @@ static int kvm_gmem_folio_zap_direct_map(struct folio *folio)
 	r = folio_zap_direct_map(folio);
 	if (!r)
 		folio->private = (void *)((u64)folio->private | KVM_GMEM_FOLIO_NO_DIRECT_MAP);
+	if (guest_memfd_tlb_flush)
+		flush_tlb_kernel_range(addr, addr + folio_size(folio));
 
 out:
 	return r;

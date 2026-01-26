@@ -617,12 +617,18 @@ static int kvm_gmem_uffd_filemap_add(struct folio *folio,
        pgoff_t pgoff = linear_page_index(vma, addr);
        int err;
 
-       __folio_set_locked(folio);
-       err = filemap_add_folio(mapping, folio, pgoff, GFP_KERNEL);
-       if (err) {
-               folio_unlock(folio);
-               return err;
-       }
+	__folio_set_locked(folio);
+	err = filemap_add_folio(mapping, folio, pgoff, GFP_KERNEL);
+	if (err) {
+		folio_unlock(folio);
+		return err;
+	}
+
+	err = kvm_gmem_folio_zap_direct_map(folio);
+	if (err) {
+		folio_unlock(folio);
+		return err;
+	}
 
        return 0;
 }

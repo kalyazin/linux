@@ -5473,14 +5473,8 @@ static vm_fault_t hugetlb_vm_op_fault(struct vm_fault *vmf)
 }
 
 #ifdef CONFIG_USERFAULTFD
-static bool hugetlb_can_userfault(struct vm_area_struct *vma,
-				  vm_flags_t vm_flags)
-{
-	return true;
-}
-
 static const struct vm_uffd_ops hugetlb_uffd_ops = {
-	.can_userfault = hugetlb_can_userfault,
+	.supported_uffd_flags = __VM_UFFD_FLAGS,
 };
 #endif
 

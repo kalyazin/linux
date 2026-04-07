@@ -3218,13 +3218,8 @@ static struct folio *shmem_get_folio_noalloc(struct inode *inode, pgoff_t pgoff)
 	return folio;
 }
 
-static bool shmem_can_userfault(struct vm_area_struct *vma, vm_flags_t vm_flags)
-{
-	return true;
-}
-
 static const struct vm_uffd_ops shmem_uffd_ops = {
-	.can_userfault		= shmem_can_userfault,
+	.supported_uffd_flags   = __VM_UFFD_FLAGS,
 	.get_folio_noalloc	= shmem_get_folio_noalloc,
 	.alloc_folio		= shmem_mfill_folio_alloc,
 	.filemap_add		= shmem_mfill_filemap_add,

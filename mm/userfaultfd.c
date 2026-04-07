@@ -58,8 +58,8 @@ static struct folio *anon_alloc_folio(struct vm_area_struct *vma,
 }
 
 static const struct vm_uffd_ops anon_uffd_ops = {
-	.can_userfault	= anon_can_userfault,
-	.alloc_folio	= anon_alloc_folio,
+	.supported_uffd_flags   = __VM_UFFD_FLAGS & ~VM_UFFD_MINOR,
+	.alloc_folio            = anon_alloc_folio,
 };
 
 static const struct vm_uffd_ops *vma_uffd_ops(struct vm_area_struct *vma)
@@ -2089,7 +2089,7 @@ bool vma_can_userfault(struct vm_area_struct *vma, vm_flags_t vm_flags,
 	    !ops->get_folio_noalloc)
 		return false;
 
-	return ops->can_userfault(vma, vm_flags);
+	return ops->supported_uffd_flags & vm_flags;
 }
 
 static void userfaultfd_set_vm_flags(struct vm_area_struct *vma,

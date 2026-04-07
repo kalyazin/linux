@@ -32,14 +32,6 @@ struct mfill_state {
 	pmd_t *pmd;
 };
 
-static bool anon_can_userfault(struct vm_area_struct *vma, vm_flags_t vm_flags)
-{
-	/* anonymous memory does not support MINOR mode */
-	if (vm_flags & VM_UFFD_MINOR)
-		return false;
-	return true;
-}
-
 static struct folio *anon_alloc_folio(struct vm_area_struct *vma,
 				      unsigned long addr)
 {
@@ -2089,7 +2081,7 @@ bool vma_can_userfault(struct vm_area_struct *vma, vm_flags_t vm_flags,
 	    !ops->get_folio_noalloc)
 		return false;
 
-	return ops->supported_uffd_flags & vm_flags;
+	return (ops->supported_uffd_flags & vm_flags) == vm_flags;
 }
 
 static void userfaultfd_set_vm_flags(struct vm_area_struct *vma,
